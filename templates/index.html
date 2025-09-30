@@ -1,0 +1,83 @@
+{{ define "index" }}
+{{ template "header" . }}
+<main class="container">
+  <section class="hero">
+    <h2>您的专业旅行顾问 — 星程国际旅行社</h2>
+    <p>定制出境游、团队包团、签证代办、机票/酒店预订。让旅行更简单、更安心。</p>
+    <p><a class="btn" href="/contact">联系我们</a></p>
+  </section>
+
+  <section class="services">
+    <h3>我们的服务</h3>
+    <div class="services-grid">
+      <article class="service-card">
+        <img src="/static/images/team.svg" alt="团队包团·定制">
+        <h4>团队包团·定制</h4>
+        <p>为企业与团体提供专属行程与一站式接待方案，支持会务与商务拓展。</p>
+      </article>
+
+      <article class="service-card">
+        <img src="/static/images/outbound.svg" alt="出境旅游">
+        <h4>出境旅游</h4>
+        <p>覆盖欧洲、美洲、东南亚等热门线路，提供签证、接送与本地服务支持。</p>
+      </article>
+
+      <article class="service-card">
+        <img src="/static/images/domestic.svg" alt="国内旅游">
+        <h4>国内旅游</h4>
+        <p>深度游、摄影团、亲子游等精选产品，满足不同人群与季节需求。</p>
+      </article>
+
+      <article class="service-card">
+        <img src="/static/images/visa.svg" alt="签证代办">
+        <h4>签证代办</h4>
+        <p>覆盖常见国家签证材料准备、填表与快速审批通道，专业高效。</p>
+      </article>
+
+      <article class="service-card">
+        <img src="/static/images/booking.svg" alt="机票/酒店预订">
+        <h4>机票/酒店预订</h4>
+        <p>一站式机票比价与酒店预订，支持退改保障与城市交通接驳安排。</p>
+      </article>
+    </div>
+  </section>
+  
+  <section class="gallery outbound">
+    <h3>出境旅游 · 精选风景</h3>
+    <div class="gallery-grid">
+      <figure>
+        <img src="/static/images/outbound1.svg" alt="出境风景1">
+      </figure>
+      <figure>
+        <img src="/static/images/outbound2.svg" alt="出境风景2">
+      </figure>
+      <figure>
+        <img src="/static/images/outbound3.svg" alt="出境风景3">
+      </figure>
+    </div>
+  </section>
+
+  <section class="gallery domestic">
+    <h3>国内旅游 · 精选风景</h3>
+    <div class="gallery-grid">
+      <figure>
+        <img src="/static/images/domestic1.svg" alt="国内风景1">
+      </figure>
+      <figure>
+        <img src="/static/images/domestic2.svg" alt="国内风景2">
+      </figure>
+      <figure>
+        <img src="/static/images/domestic3.svg" alt="国内风景3">
+      </figure>
+    </div>
+  </section>
+
+  <section class="contact-quick">
+    <h3>快速联系</h3>
+    <p>电话：{{ .Contact.Phone }}</p>
+    <p>邮箱：{{ .Contact.Email }}</p>
+    <p>微信：{{ .Contact.Wechat }}</p>
+  </section>
+</main>
+{{ template "footer" . }}
+{{ end }}

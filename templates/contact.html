@@ -1,0 +1,30 @@
+{{ define "contact" }}
+{{ template "header" . }}
+<main class="container">
+    <h2>联系我们</h2>
+    <p>欢迎来电或来邮咨询，我们将尽快为您服务。以下为我们的联系方式及在线留言表单。</p>
+    <section class="contact-form">
+        <h3>在线留言</h3>
+        <form id="contactForm" method="post" action="/contact">
+            <label>姓名<br><input type="text" name="name" required></label><br>
+            <label>邮箱<br><input type="email" name="email" required></label><br>
+            <label>电话<br><input type="text" name="phone"></label><br>
+            <label>留言<br><textarea name="message" rows="5" required></textarea></label><br>
+            <button type="submit" class="btn">发送留言</button>
+        </form>
+        <p id="formResult" style="margin-top:8px"></p>
+    </section>
+    <dl>
+        <dt>电话</dt>
+        <dd>{{ .Contact.Phone }}</dd>
+        <dt>邮箱</dt>
+        <dd>{{ .Contact.Email }}</dd>
+        <dt>微信</dt>
+        <dd>{{ .Contact.Wechat }}</dd>
+        <dt>地址</dt>
+        <dd>{{ .Contact.Address }}</dd>
+    </dl>
+    <script src="/static/js/contact.js"></script>
+</main>
+{{ template "footer" . }}
+{{ end }}

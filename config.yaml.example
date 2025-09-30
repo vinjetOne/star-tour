@@ -1,0 +1,12 @@
+smtp:
+  host: smtp.example.com
+  port: 587
+  user: your-smtp-user@example.com
+  pass: your-smtp-password
+  contact_to: notify@example.com
+
+contact:
+  phone: "0755-1234-5678"
+  email: "service@xingcheng-travel.com"
+  wechat: "xingcheng_travel"
+  address: "深圳市南山区科技园"

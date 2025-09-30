@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="200" height="140" viewBox="0 0 200 140" xmlns="http://www.w3.org/2000/svg">
+  <rect width="200" height="140" rx="10" fill="#e8fff0"/>
+  <g fill="#2ecc71">
+    <circle cx="60" cy="70" r="18"/>
+    <rect x="100" y="50" width="60" height="40" rx="6"/>
+  </g>
+  <text x="100" y="125" font-size="12" text-anchor="middle" fill="#178a4b">国内旅游</text>
+</svg>

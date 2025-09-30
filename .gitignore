@@ -1,0 +1,27 @@
+# Binaries
+star-tour.exe
+
+# Logs
+out.txt
+err.txt
+
+# Editor files
+.vscode/
+*.swp
+
+# Config (do not commit secrets)
+config.yaml
+
+# Go build cache and modules
+bin/
+*.exe
+*.test
+# Binaries
+star-tour.exe
+star-tour
+
+# Go modules
+vendor/
+
+# Local config (contains secrets)
+config.yaml

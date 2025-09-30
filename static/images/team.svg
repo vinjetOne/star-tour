@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="200" height="140" viewBox="0 0 200 140" xmlns="http://www.w3.org/2000/svg">
+  <rect width="200" height="140" rx="10" fill="#e8f4ff"/>
+  <g fill="#0b74de">
+    <circle cx="60" cy="50" r="18"/>
+    <circle cx="110" cy="50" r="18"/>
+    <circle cx="160" cy="50" r="18"/>
+  </g>
+  <rect x="30" y="85" width="140" height="12" rx="6" fill="#bfe1ff"/>
+  <text x="100" y="120" font-size="12" text-anchor="middle" fill="#0666b0">团队包团·定制</text>
+</svg>

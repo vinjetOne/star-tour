@@ -1,0 +1,11 @@
+{{ define "404" }}
+{{ template "header" . }}
+<main class="container">
+  <section class="not-found">
+    <h2>404 - 页面未找到</h2>
+    <p>抱歉，您访问的页面不存在。请返回首页或使用导航链接查找其他内容。</p>
+    <p><a class="btn" href="/">返回首页</a></p>
+  </section>
+</main>
+{{ template "footer" . }}
+{{ end }}

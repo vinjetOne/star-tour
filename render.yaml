@@ -1,0 +1,44 @@
+# Render.com 服务定义 - 用于自动化部署
+# 将此仓库连接到 Render，Render 会读取本文件以配置服务。
+# 注意：不要在仓库中提交真实的 SMTP 密码或机密；在 Render Dashboard -> Environment -> Environment Variables 中填写。
+services:
+  - type: web
+    name: star-tour
+    env: static
+    region: oregon
+    plan: free
+    repo: .
+    branch: main
+    buildCommand: go build -o star-tour.exe .
+    startCommand: ./star-tour.exe
+    envVars:
+      - key: PORT
+        value: 8080
+      - key: SMTP_HOST
+        # value: smtp.example.com
+        fromDatabase: false
+      - key: SMTP_PORT
+        # value: "587"
+        fromDatabase: false
+      - key: SMTP_USER
+        # value: user@example.com
+        fromDatabase: false
+      - key: SMTP_PASS
+        # value: "<SET IN DASHBOARD>"
+        fromDatabase: false
+      - key: SMTP_CONTACT_TO
+        # value: contact@yourcompany.com
+        fromDatabase: false
+      - key: CONTACT_PHONE
+        # value: "+86 755 1234 5678"
+        fromDatabase: false
+      - key: CONTACT_EMAIL
+        # value: info@yourcompany.com
+        fromDatabase: false
+      - key: CONTACT_WECHAT
+        # value: "star-tour-wechat"
+        fromDatabase: false
+      - key: CONTACT_ADDRESS
+        # value: "深圳市南山区 xxx"
+        fromDatabase: false
+    # 如果有私有模块或私有依赖，可在 Render Dashboard 上配置 Private Service Account
