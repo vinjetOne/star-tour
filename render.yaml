@@ -12,8 +12,10 @@ services:
     buildCommand: go build -o star-tour.exe .
     startCommand: ./star-tour.exe
     envVars:
+      # Runtime PORT (Render will set this automatically; keep default if needed)
       - key: PORT
         value: 8080
+      # Do NOT store secrets in the repository. Set the following in Render Dashboard -> Environment -> Add Environment Variable.
       - key: SMTP_HOST
         # value: smtp.example.com
         fromDatabase: false
@@ -24,21 +26,21 @@ services:
         # value: user@example.com
         fromDatabase: false
       - key: SMTP_PASS
-        # value: "<SET IN DASHBOARD>"
+        # value: "<SET IN DASHBOARD>"  # REQUIRED: set in Render Dashboard (secret)
         fromDatabase: false
       - key: SMTP_CONTACT_TO
-        # value: contact@yourcompany.com
+        # value: contact@example.com
         fromDatabase: false
       - key: CONTACT_PHONE
-        # value: "+86 755 1234 5678"
+        # value: "+86 0755 1234 5678"
         fromDatabase: false
       - key: CONTACT_EMAIL
-        # value: info@yourcompany.com
+        # value: info@example.com
         fromDatabase: false
       - key: CONTACT_WECHAT
-        # value: "star-tour-wechat"
+        # value: "your_wechat"
         fromDatabase: false
       - key: CONTACT_ADDRESS
-        # value: "深圳市南山区 xxx"
+        # value: "深圳市..."
         fromDatabase: false
     # 如果有私有模块或私有依赖，可在 Render Dashboard 上配置 Private Service Account
