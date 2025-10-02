@@ -23,9 +23,6 @@ services:
       - key: SMTP_USER
         value: vinjet.lee@gmail.com
         fromDatabase: false
-      - key: SMTP_PASS
-        value: "maqndkwxqaasqeqf"
-        fromDatabase: false
       - key: SMTP_CONTACT_TO
         value: vinjet.lee@gmail.com
         fromDatabase: false
