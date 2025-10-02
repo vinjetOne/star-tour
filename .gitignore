@@ -11,6 +11,7 @@ err.txt
 
 # Config (do not commit secrets)
 config.yaml
+render.yaml
 
 # Go build cache and modules
 bin/
