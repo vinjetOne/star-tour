@@ -2,12 +2,14 @@ package main
 
 import (
 	"bytes"
+	"crypto/tls"
 	"encoding/json"
 	"fmt"
 	"io"
 	"log"
 	"net/http"
 	"os"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	gomail "gopkg.in/gomail.v2"
@@ -44,34 +46,38 @@ func main() {
 	// 模板
 	r.LoadHTMLGlob("templates/*")
 
+	// 当前年份（用于版权展示）
+	year := fmt.Sprintf("%d", nowYear())
+
 	// 路由
 	r.GET("/", func(c *gin.Context) {
 		c.HTML(http.StatusOK, "index", gin.H{
 			"Title":    siteName,
 			"SiteName": siteName,
 			"Contact":  cfg.Contact,
+			"SiteYear": year,
 		})
 	})
 
 	r.GET("/about", func(c *gin.Context) {
-		c.HTML(http.StatusOK, "about", gin.H{"Title": fmt.Sprintf("关于我们 - %s", siteName), "SiteName": siteName, "Contact": cfg.Contact})
+		c.HTML(http.StatusOK, "about", gin.H{"Title": fmt.Sprintf("关于我们 - %s", siteName), "SiteName": siteName, "Contact": cfg.Contact, "SiteYear": year})
 	})
 
 	r.GET("/contact", func(c *gin.Context) {
-		c.HTML(http.StatusOK, "contact", gin.H{"Title": fmt.Sprintf("联系我们 - %s", siteName), "SiteName": siteName, "Contact": cfg.Contact})
+		c.HTML(http.StatusOK, "contact", gin.H{"Title": fmt.Sprintf("联系我们 - %s", siteName), "SiteName": siteName, "Contact": cfg.Contact, "SiteYear": year})
 	})
 
 	// 处理联系表单提交（支持 JSON 和 form 数据）
 	r.POST("/contact", func(c *gin.Context) {
 		var name, email, phone, message string
 
-		// 读取原始请求体，优先尝试 JSON 解析；若失败回退为表单
+		// 读取原始请求体并尝试解析 JSON，若失败回退为表单
 		raw, err := io.ReadAll(c.Request.Body)
 		if err != nil {
 			log.Printf("读取请求体失败: %v", err)
 		}
+		// 为避免泄露敏感信息，不把原始请求体写入日志，只记录 Content-Type
 		log.Printf("请求 Content-Type: %s", c.GetHeader("Content-Type"))
-		log.Printf("请求原始体: %s", string(raw))
 
 		// 尝试解析 JSON
 		var payload struct {
@@ -121,27 +127,47 @@ func main() {
 		body := fmt.Sprintf("姓名: %s\n邮箱: %s\n电话: %s\n\n留言:\n%s", name, email, phone, message)
 
 		m := gomail.NewMessage()
-		m.SetHeader("From", smtpUser)
+		// 从地址显示为站点名称 <user@...>
+		fromHeader := smtpUser
+		if site := cfg.SiteName; site != "" {
+			fromHeader = fmt.Sprintf("%s <%s>", site, smtpUser)
+		} else {
+			fromHeader = smtpUser
+		}
+		m.SetHeader("From", fromHeader)
 		m.SetHeader("To", contactTo)
 		m.SetHeader("Subject", subject)
 		m.SetBody("text/plain", body)
 
 		d := gomail.NewDialer(smtpHost, smtpPort, smtpUser, smtpPass)
 
+		// 首次发送
 		if err := d.DialAndSend(m); err != nil {
-			// 记录错误并返回（不泄露密码）
-			log.Printf("邮件发送失败: to=%s subject=%s err=%v", contactTo, subject, err)
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "发送邮件失败"})
-			return
+			// 记录首次错误（不包含密码），并根据环境变量决定是否尝试跳过 TLS 验证重试
+			log.Printf("邮件发送失败（首次尝试）: to=%s subject=%s err=%v", contactTo, subject, err)
+			// 如果设置了 SMTP_SKIP_TLS_VERIFY=true 则尝试使用 InsecureSkipVerify 重试一次
+			if os.Getenv("SMTP_SKIP_TLS_VERIFY") == "true" {
+				log.Printf("尝试使用 InsecureSkipVerify 重试发送邮件（请仅在测试环境启用）")
+				d.TLSConfig = &tls.Config{InsecureSkipVerify: true}
+				if err2 := d.DialAndSend(m); err2 != nil {
+					log.Printf("邮件发送失败（重试）: to=%s subject=%s err=%v", contactTo, subject, err2)
+					c.JSON(http.StatusInternalServerError, gin.H{"error": "发送邮件失败"})
+					return
+				}
+				log.Printf("邮件已发送（重试成功）: from=%s to=%s subject=%s", smtpUser, contactTo, subject)
+			} else {
+				c.JSON(http.StatusInternalServerError, gin.H{"error": "发送邮件失败"})
+				return
+			}
+		} else {
+			log.Printf("邮件已发送: from=%s to=%s subject=%s", smtpUser, contactTo, subject)
 		}
-
-		log.Printf("邮件已发送: from=%s to=%s subject=%s", smtpUser, contactTo, subject)
 		c.JSON(http.StatusOK, gin.H{"message": "感谢您的留言，我们已收到并会尽快联系您。"})
 	})
 
 	// 未命中路由返回 404 简单页面，避免渲染首页内容
 	r.NoRoute(func(c *gin.Context) {
-		c.HTML(http.StatusNotFound, "404", gin.H{"Title": fmt.Sprintf("404 - 页面未找到 - %s", siteName), "SiteName": siteName, "Contact": cfg.Contact})
+		c.HTML(http.StatusNotFound, "404", gin.H{"Title": fmt.Sprintf("404 - 页面未找到 - %s", siteName), "SiteName": siteName, "Contact": cfg.Contact, "SiteYear": year})
 	})
 
 	// 在 PaaS（例如 Render）上，端口通常由环境变量提供（PORT）。默认为 8080
@@ -150,6 +176,11 @@ func main() {
 		port = "8080"
 	}
 	r.Run(":" + port)
+}
+
+// nowYear 返回当前年份（整型）
+func nowYear() int {
+	return time.Now().Year()
 }
 
 // applyEnvOverrides 会将常见的环境变量覆盖到 cfg 中，便于在部署平台上配置
