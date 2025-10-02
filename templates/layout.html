@@ -11,8 +11,8 @@
   <header class="site-header">
     <div class="container header-row">
       <div class="brand">
-        <a href="/" class="brand-link"><img src="/static/images/star-tour_logo.png" alt="星程国际旅行社" /></a>
-        <span class="brand-text">深圳市星程国际旅行社</span>
+        <a href="/" class="brand-link"><img src="/static/images/star-tour_logo.png" alt="{{ .SiteName }}" /></a>
+        <span class="brand-text">{{ .SiteName }}</span>
       </div>
       <nav class="main-nav">
         <a href="/">首页</a>
@@ -26,7 +26,7 @@
 {{ define "footer" }}
   <footer class="site-footer">
     <div class="container">
-      <p>© 2025 深圳市星程国际旅行社 · All Rights Reserved</p>
+      <p>© 2025 {{ .SiteName }} · All Rights Reserved</p>
     </div>
   </footer>
 </body>

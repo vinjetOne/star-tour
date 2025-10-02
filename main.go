@@ -31,6 +31,12 @@ func main() {
 	// 用环境变量覆盖配置（优先使用环境变量）
 	applyEnvOverrides(cfg)
 
+	// 站点名称，优先使用配置/环境变量，若为空使用公司全称默认值
+	siteName := cfg.SiteName
+	if siteName == "" {
+		siteName = "深圳市星程国际旅行社有限公司"
+	}
+
 	r := gin.Default()
 	// 静态资源
 	r.Static("/static", "./static")
@@ -41,17 +47,18 @@ func main() {
 	// 路由
 	r.GET("/", func(c *gin.Context) {
 		c.HTML(http.StatusOK, "index", gin.H{
-			"Title":   "深圳市星程国际旅行社",
-			"Contact": cfg.Contact,
+			"Title":    siteName,
+			"SiteName": siteName,
+			"Contact":  cfg.Contact,
 		})
 	})
 
 	r.GET("/about", func(c *gin.Context) {
-		c.HTML(http.StatusOK, "about", gin.H{"Title": "关于我们 - 深圳市星程国际旅行社", "Contact": cfg.Contact})
+		c.HTML(http.StatusOK, "about", gin.H{"Title": fmt.Sprintf("关于我们 - %s", siteName), "SiteName": siteName, "Contact": cfg.Contact})
 	})
 
 	r.GET("/contact", func(c *gin.Context) {
-		c.HTML(http.StatusOK, "contact", gin.H{"Title": "联系我们 - 深圳市星程国际旅行社", "Contact": cfg.Contact})
+		c.HTML(http.StatusOK, "contact", gin.H{"Title": fmt.Sprintf("联系我们 - %s", siteName), "SiteName": siteName, "Contact": cfg.Contact})
 	})
 
 	// 处理联系表单提交（支持 JSON 和 form 数据）
@@ -134,7 +141,7 @@ func main() {
 
 	// 未命中路由返回 404 简单页面，避免渲染首页内容
 	r.NoRoute(func(c *gin.Context) {
-		c.HTML(http.StatusNotFound, "404", gin.H{"Title": "404 - 页面未找到"})
+		c.HTML(http.StatusNotFound, "404", gin.H{"Title": fmt.Sprintf("404 - 页面未找到 - %s", siteName), "SiteName": siteName, "Contact": cfg.Contact})
 	})
 
 	// 在 PaaS（例如 Render）上，端口通常由环境变量提供（PORT）。默认为 8080
@@ -182,6 +189,9 @@ func applyEnvOverrides(cfg *Config) {
 	if v := os.Getenv("CONTACT_ADDRESS"); v != "" {
 		cfg.Contact.Address = v
 	}
+	if v := os.Getenv("SITE_NAME"); v != "" {
+		cfg.SiteName = v
+	}
 }
 
 // Config 定义用于读取 SMTP 等配置
@@ -199,6 +209,7 @@ type Config struct {
 		Wechat  string `yaml:"wechat"`
 		Address string `yaml:"address"`
 	} `yaml:"contact"`
+	SiteName string `yaml:"site_name"`
 }
 
 func loadConfig(path string) (*Config, error) {
