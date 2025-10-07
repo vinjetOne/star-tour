@@ -26,7 +26,14 @@
 {{ define "footer" }}
   <footer class="site-footer">
     <div class="container">
-      <p>© {{ .SiteYear }} {{ .SiteName }} · All Rights Reserved</p>
+      <p style="font-size:13px; color:#888; text-align:center; margin:0;">
+        © {{ .SiteYear }} {{ .SiteName }} · All Rights Reserved
+        <span style="margin-left:16px;">
+          <a href="https://beian.miit.gov.cn/" target="_blank" rel="noopener" style="color:#888; text-decoration:none;">
+            粤ICP备2022094766号-1
+          </a>
+        </span>
+      </p>
     </div>
   </footer>
 </body>
